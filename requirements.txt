@@ -1,0 +1,5 @@
+plotly==5.20.0
+python-dotenv==1.0.1
+streamlit==1.33.0
+supabase==1.0.3
+yfinance==0.2.12
