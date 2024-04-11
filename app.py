@@ -1,6 +1,7 @@
 import plotly.express as px
 import streamlit as st 
 import yfinance as yf 
+from st_pages import Page, show_pages
 
 
 def view_stock_price():
