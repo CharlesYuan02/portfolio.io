@@ -22,15 +22,16 @@ def insert_into_supabase(ticker, amount, date, price, total_value):
     '''
     SUPABASE_URL = os.environ.get("SUPABASE_URL")
     SUPABASE_API_KEY = os.environ.get("SUPABASE_API_KEY")
-    TABLE_NAME = os.environ.get("TABLE_NAME") # TODO: Change this for different users
+    STOCK_DATA_TABLE = os.environ.get("STOCK_DATA_TABLE")
     client = supabase.create_client(SUPABASE_URL, SUPABASE_API_KEY)
-    data, count = client.table(TABLE_NAME).insert(
+    data, count = client.table(STOCK_DATA_TABLE).insert(
         {
             "stock": ticker,
             "amount": amount,
             "unit_price": price,
             "total_price": total_value,
-            "date_purchased": date.strftime("%Y-%m-%d")
+            "date_purchased": date.strftime("%Y-%m-%d"),
+            "owner": st.session_state["email"]
         }
     ).execute()
     return data, count
@@ -81,6 +82,10 @@ def add_position(ticker, amount, price, date):
 
 
 if __name__ == "__main__":
+    # Upon refresh of cache/session state, go back to login page
+    if "logged_in" not in st.session_state:
+        st.switch_page("app.py")
+
     ticker = st.text_input("Stock Ticker:")
     amount = st.number_input("Amount:", min_value=0)
     fractional = st.number_input("Fractional Amount:", min_value=0.000, step=1e-3, format="%.3f")

@@ -20,12 +20,15 @@ def retrieve_from_supabase():
     '''
     SUPABASE_URL = os.environ.get("SUPABASE_URL")
     SUPABASE_API_KEY = os.environ.get("SUPABASE_API_KEY")
-    TABLE_NAME = os.environ.get("TABLE_NAME")
+    STOCK_DATA_TABLE = os.environ.get("STOCK_DATA_TABLE")
     client = supabase.create_client(SUPABASE_URL, SUPABASE_API_KEY)
-    response = client.table(TABLE_NAME).select("*").execute()
+    response = client.table(STOCK_DATA_TABLE).select("*").eq("owner", st.session_state["email"]).execute()
+    if not response.data:
+        st.error("You have not added any positions yet!")
+        return
     df = pd.DataFrame.from_dict(response.data)
     df.sort_values(by="date_purchased", inplace=True)
-    display = df.drop(["id", "created_at"], axis=1)
+    display = df.drop(["id", "created_at", "owner"], axis=1)
     display.reset_index(drop=True, inplace=True)
     st.table(display)
 
@@ -50,6 +53,10 @@ def retrieve_from_supabase():
     
 
 if __name__ == "__main__":
+    # Upon refresh of cache/session state, go back to login page
+    if "logged_in" not in st.session_state:
+        st.switch_page("app.py")
+
     if st.button("View Positions"):
         load_dotenv()
         retrieve_from_supabase()
