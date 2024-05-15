@@ -8,6 +8,16 @@ from st_pages import Page, show_pages
 
 
 def register(email, password):
+    '''
+    Basic homepage. Retrieves a stock's price history and displays it on a line graph.
+    
+    Args:
+        email (str): User's email
+        password (str): User's password (can be alphanumeric)
+
+    Returns:
+        successful_registration (bool): Whether the user successfully registered (fails if user already exists)
+    '''
     SUPABASE_URL = os.environ.get("SUPABASE_URL")
     SUPABASE_API_KEY = os.environ.get("SUPABASE_API_KEY")
     ALL_USERS_TABLE = os.environ.get("ALL_USERS_TABLE")
