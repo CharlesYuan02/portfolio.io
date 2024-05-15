@@ -5,15 +5,16 @@ import streamlit as st
 import supabase
 import yfinance as yf 
 from dotenv import load_dotenv
+from src.utils import get_portfolios
 
 
-def retrieve_from_supabase():
+def retrieve_from_supabase(portfolio):
     '''
-    Retrieves all positions from a user's Supabase table
+    Retrieves all positions from a user's specified portfolio
     and displays their investment portfolio historical value on a line graph.
 
     Args:
-        None
+        portfolio (str): The name of the portfolio to retrieve positions from
     
     Returns:
         None
@@ -22,18 +23,26 @@ def retrieve_from_supabase():
     SUPABASE_API_KEY = os.environ.get("SUPABASE_API_KEY")
     STOCK_DATA_TABLE = os.environ.get("STOCK_DATA_TABLE")
     client = supabase.create_client(SUPABASE_URL, SUPABASE_API_KEY)
-    response = client.table(STOCK_DATA_TABLE).select("*").eq("owner", st.session_state["email"]).execute()
-    if not response.data:
-        st.error("You have not added any positions yet!")
-        return
+
+    # Return response using eq with both email and portfolio
+    response = client.table(STOCK_DATA_TABLE).select("*").eq("owner", st.session_state["email"]).eq("portfolio", portfolio).execute()
     df = pd.DataFrame.from_dict(response.data)
     df.sort_values(by="date_purchased", inplace=True)
-    display = df.drop(["id", "created_at", "owner"], axis=1)
+    display = df.drop(["id", "created_at", "owner", "portfolio"], axis=1)
     display.reset_index(drop=True, inplace=True)
     st.table(display)
 
     with st.spinner("Loading..."):
         combined_price_history = []
+        
+        # If all the existing positions are not over a day old, then there is no historical data to display
+        # Specifically, one trading day old (must factor in current time)
+        current_time = pd.Timestamp.now()
+        not_trading_hours = current_time.hour < 9 or current_time.hour > 16
+        if (pd.Timestamp.now() - pd.Timestamp(df["date_purchased"].min())).days <= 1 and not_trading_hours:
+            st.write("No historical data to display.")
+            st.stop()
+
         for _, row in df.iterrows():
             stock = yf.download(row["stock"], start=row["date_purchased"])
             closing_price = stock["Close"]
@@ -50,13 +59,20 @@ def retrieve_from_supabase():
                 showlegend=False
         )
         st.plotly_chart(fig)
-    
+
 
 if __name__ == "__main__":
     # Upon refresh of cache/session state, go back to login page
     if "logged_in" not in st.session_state:
         st.switch_page("app.py")
 
-    if st.button("View Positions"):
-        load_dotenv()
-        retrieve_from_supabase()
+    # Create a dropdown menu for all the user's portfolios
+    portfolios, _ = get_portfolios(st.session_state["email"])
+    if not portfolios:
+        st.write("You have not created any portfolios yet! Go to the Add Position page to create one.")
+        st.stop()
+    else:
+        selected_portfolio = st.selectbox("Portfolio:", portfolios)
+        if selected_portfolio is not None:
+            load_dotenv()
+            retrieve_from_supabase(selected_portfolio)
