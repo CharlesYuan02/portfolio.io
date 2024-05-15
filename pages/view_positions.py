@@ -38,7 +38,7 @@ def retrieve_from_supabase(portfolio):
         # Specifically, one trading day old (must factor in current time)
         current_time = pd.Timestamp.now()
         trading_hours = (current_time.hour >= 9 and current_time.minute > 30) or current_time.hour <= 16
-        if (pd.Timestamp.now() - pd.Timestamp(df["date_purchased"].min())).days <= 1 and trading_hours:
+        if (pd.Timestamp.now() - pd.Timestamp(df["date_purchased"].min())).days <= 1 and not trading_hours:
             st.table(display)
             st.write("No historical data to display.")
             st.stop()
