@@ -27,10 +27,8 @@ Supabase was used to store the existing positions for each user, in order to dis
 yfinance was used to retrieve historical stock information.
 
 ## To Do
-- Create login and individual user pages
-- Create leaderboard and community showcase of portfolios
 - Create friends feature, where you can view your friends' portfolio performances
-- Create better frontend
+- Create better frontend and improve UI
 - Integrate [Mango10K](https://github.com/Chubbyman2/Mango10K/tree/main) RAG chatbot for investment guidance
 
 ## License
