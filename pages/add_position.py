@@ -6,7 +6,7 @@ from datetime import timedelta
 from dotenv import load_dotenv
 
 
-def insert_into_supabase(ticker, amount, date, price, total_value):
+def insert_into_supabase(ticker, amount, date, price, total_value, portfolio):
     '''
     Inserts a new position into the user's Supabase table.
 
@@ -16,9 +16,11 @@ def insert_into_supabase(ticker, amount, date, price, total_value):
         date (datetime.date): The datetime.date object corresponding to the purchase date of the shares
         price (float): The price of the shares when bought
         total_value (float): The total value of the new position (price * amount)
+        portfolio (str): The name of the portfolio to add the new position to
     
     Returns:
-        None
+        data (dict): The data of the new position
+        count (int): The number of positions added
     '''
     SUPABASE_URL = os.environ.get("SUPABASE_URL")
     SUPABASE_API_KEY = os.environ.get("SUPABASE_API_KEY")
@@ -31,13 +33,40 @@ def insert_into_supabase(ticker, amount, date, price, total_value):
             "unit_price": price,
             "total_price": total_value,
             "date_purchased": date.strftime("%Y-%m-%d"),
-            "owner": st.session_state["email"]
+            "owner": st.session_state["email"],
+            "portfolio": portfolio
         }
     ).execute()
     return data, count
 
 
-def add_position(ticker, amount, price, date):
+def create_new_portfolio(portfolio, is_public):
+    '''
+    Adds the new portfolio to the portfolios table in Supabase.
+
+    Args:
+        portfolio (str): The name of the new portfolio
+        is_public (bool): Whether the new portfolio is to be made public or not
+
+    Returns:
+        data (dict): The data of the new position
+        count (int): The number of positions added
+    '''
+    SUPABASE_URL = os.environ.get("SUPABASE_URL")
+    SUPABASE_API_KEY = os.environ.get("SUPABASE_API_KEY")
+    PORTFOLIOS_TABLE = os.environ.get("PORTFOLIOS_TABLE")
+    client = supabase.create_client(SUPABASE_URL, SUPABASE_API_KEY)
+    data, count = client.table(PORTFOLIOS_TABLE).insert(
+        {
+            "email": st.session_state["email"],
+            "portfolio": portfolio,
+            "is_public": is_public
+        }
+    ).execute()
+    return data, count
+
+
+def add_position(ticker, amount, price, date, portfolio, is_public, is_new_portfolio):
     '''
     Displays the UI for entering a new position. 
     Calls insert_into_supabase to actually register the new position.
@@ -47,6 +76,9 @@ def add_position(ticker, amount, price, date):
         amount (float): The amount of shares bought (can be fractional)
         date (datetime.date): The datetime.date object corresponding to the purchase date of the shares
         price (float): The price of the shares when bought
+        portfolio (str): The name of the portfolio to add the new position to
+        is_public (bool): Whether the portfolio is to be made public or not
+        is_new_portfolio (bool): Whether the portfolio is new or not
     
     Returns:
         None
@@ -70,15 +102,41 @@ def add_position(ticker, amount, price, date):
             st.write(f"Date: {date}")
             st.write(f"Price: ${price:.2f}")
             st.write(f"Total Value: ${total_value:.2f}")
+            st.write(f"Add To: {portfolio}")
 
             if st.button("Add Position"):
-                data, count = insert_into_supabase(ticker, amount, date, price, total_value)
+                data, count = insert_into_supabase(ticker, amount, date, price, total_value, portfolio)
+                if is_new_portfolio:
+                    data_new_portfolio, count_new_portfolio = create_new_portfolio(portfolio, is_public)
+                    if data_new_portfolio and count_new_portfolio:
+                        st.write("Successfully added new portfolio!")
+                    else:
+                        st.write("Error adding new portfolio!")
                 if data and count:
-                    st.write("Success!")
+                    st.write("Successfully added new entry!")
                 else:
-                    st.write("Error!")
+                    st.write("Error adding new entry!")
     else:
         st.write("No data available for the specified date")
+
+
+def get_portfolios(email):
+    '''
+    Retrieves all the portfolios for a given user.
+
+    Args:
+        email (str): The user's email
+    
+    Returns:
+        portfolios (list): A list of all the user's portfolios
+        are_public (dict): A dictionary mapping each portfolio to whether it is public or not
+    '''
+    SUPABASE_URL = os.environ.get("SUPABASE_URL")
+    SUPABASE_API_KEY = os.environ.get("SUPABASE_API_KEY")
+    PORTFOLIOS_TABLE = os.environ.get("PORTFOLIOS_TABLE")
+    client = supabase.create_client(SUPABASE_URL, SUPABASE_API_KEY)
+    response = client.table(PORTFOLIOS_TABLE).select("portfolio", "is_public").eq("email", email).execute()
+    return [row["portfolio"] for row in response.data], {row["portfolio"]: row["is_public"] for row in response.data}
 
 
 if __name__ == "__main__":
@@ -93,6 +151,24 @@ if __name__ == "__main__":
     price = st.number_input("Purchase Price:", min_value=0.00)
     date = st.date_input("Date Purchased:", format="YYYY-MM-DD")
 
+    # Allow users to have multiple portfolios
+    portfolios, are_public = get_portfolios(st.session_state["email"])
+    option = st.selectbox(
+        "Add To:",
+        portfolios + ["Create New"]
+    )
+    portfolio = option if option != "Create New" else None
+    is_public = are_public.get(option, False) # Default to False if portfolio doesn't exist
+    if option == "Create New":
+        portfolio = st.text_input("New Portfolio Name:")
+
+        # Give user option to make portfolio public
+        if option: 
+            is_public = st.checkbox("Make Portfolio Public")
+
     if ticker and amount and price and date:
         load_dotenv()
-        add_position(ticker, amount, price, date)
+        is_new_portfolio = (option == "Create New" and portfolio not in portfolios)
+        add_position(ticker, amount, price, date, portfolio, is_public, is_new_portfolio)
+    
+    
