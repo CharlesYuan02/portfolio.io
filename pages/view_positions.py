@@ -30,7 +30,6 @@ def retrieve_from_supabase(portfolio):
     df.sort_values(by="date_purchased", inplace=True)
     display = df.drop(["id", "created_at", "owner", "portfolio"], axis=1)
     display.reset_index(drop=True, inplace=True)
-    st.table(display)
 
     with st.spinner("Loading..."):
         combined_price_history = []
@@ -38,8 +37,9 @@ def retrieve_from_supabase(portfolio):
         # If all the existing positions are not over a day old, then there is no historical data to display
         # Specifically, one trading day old (must factor in current time)
         current_time = pd.Timestamp.now()
-        not_trading_hours = current_time.hour < 9 or current_time.hour > 16
-        if (pd.Timestamp.now() - pd.Timestamp(df["date_purchased"].min())).days <= 1 and not_trading_hours:
+        trading_hours = (current_time.hour >= 9 and current_time.minute > 30) or current_time.hour <= 16
+        if (pd.Timestamp.now() - pd.Timestamp(df["date_purchased"].min())).days <= 1 and trading_hours:
+            st.table(display)
             st.write("No historical data to display.")
             st.stop()
 
@@ -59,6 +59,7 @@ def retrieve_from_supabase(portfolio):
                 showlegend=False
         )
         st.plotly_chart(fig)
+        st.table(display)
 
 
 if __name__ == "__main__":
