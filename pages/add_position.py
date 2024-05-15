@@ -67,7 +67,7 @@ def create_new_portfolio(portfolio, is_public):
     return data, count
 
 
-def add_position(ticker, amount, price, date, portfolio, is_public, is_new_portfolio):
+def insert_position(ticker, amount, price, date, portfolio, is_public, is_new_portfolio):
     '''
     Displays the UI for entering a new position. 
     Calls insert_into_supabase to actually register the new position.
@@ -151,6 +151,6 @@ if __name__ == "__main__":
     if ticker and amount and price and date:
         load_dotenv()
         is_new_portfolio = (option == "Create New" and portfolio not in portfolios)
-        add_position(ticker, amount, price, date, portfolio, is_public, is_new_portfolio)
+        insert_position(ticker, amount, price, date, portfolio, is_public, is_new_portfolio)
     
     
