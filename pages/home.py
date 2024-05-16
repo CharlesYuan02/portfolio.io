@@ -46,6 +46,7 @@ if __name__ == "__main__":
             Page("pages/add_position.py", "Add Position"),
             Page("pages/view_positions.py", "View Positions"),
             Page("pages/leaderboard.py", "Leaderboard"),
+            Page("pages/chatbot.py", "AI Stock Insights"),
             Page("app.py", "")
         ]
     )
