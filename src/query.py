@@ -47,7 +47,7 @@ def vector_search(ticker, query):
     
     # Inject ticker into query to filter documents
     retriever_output = qa.invoke({"query": ticker + ": " + query})["result"]
-    return retriever_output
+    return retriever_output.replace("$", "\$") # Escape dollar signs to prevent LaTeX rendering issues
     
 if __name__ == "__main__":
     load_dotenv()
