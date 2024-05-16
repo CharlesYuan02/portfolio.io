@@ -3,6 +3,7 @@ import pandas as pd
 import streamlit as st 
 import supabase
 import threading
+import warnings
 import yfinance as yf 
 from src.utils import get_users
 
@@ -61,6 +62,9 @@ if __name__ == "__main__":
         st.switch_page("app.py")
 
     st.title("Leaderboard")
+
+    # Suppress FutureWarnings due to internal yfinance implementation details
+    warnings.simplefilter(action='ignore', category=FutureWarning)
 
     with st.spinner("Loading..."):
         # Retrieve all users from the users table
