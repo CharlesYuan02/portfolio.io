@@ -1,4 +1,10 @@
+edgartools==2.22.1
+langchain==0.1.20
+langchain-mongodb==0.1.5
+langchain-openai==0.1.7
+openai==1.30.1
 plotly==5.20.0
+pymongo==4.6.3
 python-dotenv==1.0.1
 streamlit==1.33.0
 st_pages==0.4.5
