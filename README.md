@@ -1,10 +1,8 @@
 # portfolio.io
-A place to share your investment portfolio with your friends, test new strategies, and gain new insights through the power of LLM retrieval-augmented generation!
+<img src="https://github.com/Chubbyman2/portfolio.io/blob/main/docs/demo-1.PNG"> 
 
 ## Introduction
-Have you ever wanted to showcase your portfolio and its performance to your friends? What about discovering new portfolio strategies from others? Well then, portfolio.io is the platform for you! 
-
-<img src="https://github.com/Chubbyman2/portfolio.io/blob/main/docs/demo-1.PNG" /> <img src="https://github.com/Chubbyman2/portfolio.io/blob/main/docs/demo-2.PNG" />
+Have you ever wanted to showcase your portfolio and its performance to your friends? What about discovering new portfolio strategies from others? Well then, portfolio.io is the platform for you! Introducing a new place to share your investment portfolio with your friends, test new strategies, and gain new insights through the power of LLM retrieval-augmented generation!
 
 ## Getting Started
 To get started, you'll need a [Supabase](https://supabase.com/) account and a table. See [.env.example](https://github.com/Chubbyman2/investment-tracker/blob/main/.env.example) for more details. Make sure to either disable RLS (not recommended) or [add a new policy](https://stackoverflow.com/questions/74302341/supabase-bucket-new-row-violates-row-level-security-policy-for-table-objects)!
