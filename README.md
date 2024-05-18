@@ -54,5 +54,7 @@ OpenAI's embedding model (text-embedding-ada-002) and the LLM for retrieval Q&A 
 ## Acknowledgements
 The AI Stock Insights feature was based on the [Mango10K RAG chatbot](https://github.com/Chubbyman2/Mango10K) built by my team, [Mango10K](https://www.linkedin.com/posts/daniel-chen297_on-april-6th-we-created-mango10k-at-activity-7184621025626615808-aZ97?utm_source=share&utm_medium=member_desktop), for MongoDB's 2024 GenAI Hackathon.
 
+<img src="https://github.com/Chubbyman2/portfolio.io/blob/main/docs/demo-2.PNG"> 
+
 ## License
 This project is licensed under the MIT License - see the <a href="https://github.com/Chubbyman2/investment-tracker/blob/main/LICENSE">LICENSE</a> file for details.
