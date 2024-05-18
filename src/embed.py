@@ -1,11 +1,11 @@
 import edgar
 import os
-import pymongo
 from dotenv import load_dotenv
 from langchain_openai import OpenAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_mongodb import MongoDBAtlasVectorSearch
 from tqdm import tqdm
+from src.utils import get_mongo_collection
 
 
 def generate_embeddings(text, ticker, source, chunk_size=1500, chunk_overlap=500):
@@ -26,12 +26,9 @@ def generate_embeddings(text, ticker, source, chunk_size=1500, chunk_overlap=500
     '''
 
     # Connect to MongoDB Atlas
-    CLUSTER_NAME = os.environ.get("CLUSTER_NAME")
-    DB_NAME = os.environ.get("DB_NAME")
-    COLLECTION_NAME = os.environ.get("COLLECTION_NAME")
+    load_dotenv()
     ATLAS_VECTOR_SEARCH_INDEX_NAME = os.environ.get("ATLAS_VECTOR_SEARCH_INDEX_NAME")
-    pymongo_client = pymongo.MongoClient(CLUSTER_NAME)
-    collection = pymongo_client[DB_NAME][COLLECTION_NAME]
+    collection = get_mongo_collection()
 
     # Split the text into smaller chunks and embed
     text_splitter = RecursiveCharacterTextSplitter(chunk_size, chunk_overlap)
@@ -53,7 +50,6 @@ def generate_embeddings(text, ticker, source, chunk_size=1500, chunk_overlap=500
 
 
 if __name__ == "__main__":
-    load_dotenv()
     ticker = "MSFT"
     source = "10-Q"
     NAME = os.environ.get("NAME")

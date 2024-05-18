@@ -1,10 +1,10 @@
 import os
 import plotly.express as px
 import streamlit as st
-import supabase 
 import yfinance as yf 
 from dotenv import load_dotenv
 from st_pages import Page, show_pages
+from src.utils import get_supabase_client
 
 
 def login(email, password):
@@ -23,10 +23,8 @@ def login(email, password):
         correct_password (bool): Indicates whether user entered correct password or not
     '''
     load_dotenv()
-    SUPABASE_URL = os.environ.get("SUPABASE_URL")
-    SUPABASE_API_KEY = os.environ.get("SUPABASE_API_KEY")
     ALL_USERS_TABLE = os.environ.get("ALL_USERS_TABLE")
-    client = supabase.create_client(SUPABASE_URL, SUPABASE_API_KEY)
+    client = get_supabase_client()
     response = client.table(ALL_USERS_TABLE).select("*").eq("email", email).execute()
     if not response.data:
         return False, False # New user
@@ -39,12 +37,6 @@ def login(email, password):
 def view_stock_price():
     '''
     Basic homepage. Retrieves a stock's price history and displays it on a line graph.
-    
-    Args:
-        None
-
-    Returns:
-        None
     '''
     ticker = st.text_input("Stock Ticker:")
     timeframe_options = ["ytd", "5d", "1mo", "3mo", "6mo", "1y", "3y", "5y", "10y", "max"]

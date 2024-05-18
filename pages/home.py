@@ -7,12 +7,6 @@ from st_pages import Page, show_pages
 def view_stock_price():
     '''
     Basic homepage. Retrieves a stock's price history and displays it on a line graph.
-    
-    Args:
-        None
-
-    Returns:
-        None
     '''
     ticker = st.text_input("Stock Ticker:")
     timeframe_options = ["ytd", "5d", "1mo", "3mo", "6mo", "1y", "3y", "5y", "10y", "max"]

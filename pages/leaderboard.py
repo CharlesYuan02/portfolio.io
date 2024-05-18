@@ -1,11 +1,11 @@
 import os
 import pandas as pd
 import streamlit as st 
-import supabase
 import threading
 import warnings
 import yfinance as yf 
-from src.utils import get_users
+from dotenv import load_dotenv
+from src.utils import get_supabase_client, get_users
 
 
 def get_portfolio_value(email):
@@ -20,10 +20,9 @@ def get_portfolio_value(email):
         portfolio_names (list): A list of the portfolio names
         total_returns (list): A list of the total returns for each portfolio
     '''
-    SUPABASE_URL = os.environ.get("SUPABASE_URL")
-    SUPABASE_API_KEY = os.environ.get("SUPABASE_API_KEY")
+    load_dotenv()
     STOCK_DATA_TABLE = os.environ.get("STOCK_DATA_TABLE")
-    client = supabase.create_client(SUPABASE_URL, SUPABASE_API_KEY)
+    client = get_supabase_client()
     response = client.table(STOCK_DATA_TABLE).select("*").eq("owner", email).execute()
     df = pd.DataFrame.from_dict(response.data)
 

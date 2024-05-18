@@ -2,10 +2,9 @@ import os
 import pandas as pd
 import plotly.express as px
 import streamlit as st 
-import supabase
 import yfinance as yf 
 from dotenv import load_dotenv
-from src.utils import get_portfolios
+from src.utils import get_supabase_client, get_portfolios
 
 
 def retrieve_from_supabase(portfolio):
@@ -19,10 +18,9 @@ def retrieve_from_supabase(portfolio):
     Returns:
         None
     '''
-    SUPABASE_URL = os.environ.get("SUPABASE_URL")
-    SUPABASE_API_KEY = os.environ.get("SUPABASE_API_KEY")
+    load_dotenv()
     STOCK_DATA_TABLE = os.environ.get("STOCK_DATA_TABLE")
-    client = supabase.create_client(SUPABASE_URL, SUPABASE_API_KEY)
+    client = get_supabase_client()
 
     # Return response using eq with both email and portfolio
     response = client.table(STOCK_DATA_TABLE).select("*").eq("owner", st.session_state["email"]).eq("portfolio", portfolio).execute()
@@ -75,5 +73,4 @@ if __name__ == "__main__":
     else:
         selected_portfolio = st.selectbox("Portfolio:", portfolios)
         if selected_portfolio is not None:
-            load_dotenv()
             retrieve_from_supabase(selected_portfolio)

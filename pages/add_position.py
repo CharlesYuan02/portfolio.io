@@ -1,10 +1,9 @@
 import os
 import streamlit as st 
-import supabase
 import yfinance as yf 
 from datetime import timedelta
 from dotenv import load_dotenv
-from src.utils import get_portfolios
+from src.utils import get_supabase_client, get_portfolios
 
 
 def insert_into_supabase(ticker, amount, date, price, total_value, portfolio):
@@ -23,10 +22,9 @@ def insert_into_supabase(ticker, amount, date, price, total_value, portfolio):
         data (dict): The data of the new position
         count (int): The number of positions added
     '''
-    SUPABASE_URL = os.environ.get("SUPABASE_URL")
-    SUPABASE_API_KEY = os.environ.get("SUPABASE_API_KEY")
+    load_dotenv()
     STOCK_DATA_TABLE = os.environ.get("STOCK_DATA_TABLE")
-    client = supabase.create_client(SUPABASE_URL, SUPABASE_API_KEY)
+    client = get_supabase_client()
     data, count = client.table(STOCK_DATA_TABLE).insert(
         {
             "stock": ticker,
@@ -53,10 +51,9 @@ def create_new_portfolio(portfolio, is_public):
         data (dict): The data of the new position
         count (int): The number of positions added
     '''
-    SUPABASE_URL = os.environ.get("SUPABASE_URL")
-    SUPABASE_API_KEY = os.environ.get("SUPABASE_API_KEY")
+    load_dotenv()
     PORTFOLIOS_TABLE = os.environ.get("PORTFOLIOS_TABLE")
-    client = supabase.create_client(SUPABASE_URL, SUPABASE_API_KEY)
+    client = get_supabase_client()
     data, count = client.table(PORTFOLIOS_TABLE).insert(
         {
             "email": st.session_state["email"],
@@ -149,7 +146,6 @@ if __name__ == "__main__":
             is_public = st.checkbox("Make Portfolio Public")
 
     if ticker and amount and price and date:
-        load_dotenv()
         is_new_portfolio = (option == "Create New" and portfolio not in portfolios)
         insert_position(ticker, amount, price, date, portfolio, is_public, is_new_portfolio)
     
