@@ -59,9 +59,9 @@ if __name__ == "__main__":
         successful_registration = register(email, password)
         if successful_registration:
             st.switch_page("pages/home.py")
-    elif not username:
+    elif not username and login_press:
         st.write("Please enter a username.")
-    elif not email:
+    elif not email and login_press:
         st.write("Please enter an email.")
-    elif not password:
+    elif not password and login_press:
         st.write("Please enter a password.")
