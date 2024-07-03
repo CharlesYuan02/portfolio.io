@@ -5,32 +5,29 @@ from st_pages import Page, show_pages
 from src.utils import get_supabase_client, get_users
 
 
-def register(email, password):
+def register(username, email, password):
     '''
     Basic homepage. Retrieves a stock's price history and displays it on a line graph.
     
     Args:
+        username (str): User's username
         email (str): User's email
         password (str): User's password (can be alphanumeric)
 
     Returns:
-        successful_registration (bool): Whether the user successfully registered (fails if user already exists)
+        None
     '''
     load_dotenv()
     ALL_USERS_TABLE = os.environ.get("ALL_USERS_TABLE")
     client = get_supabase_client()
-    response = client.table(ALL_USERS_TABLE).select("*").eq("email", email).execute()
-    if not response.data:
-        client.table(ALL_USERS_TABLE).insert(
-            {
-                "email": email,
-                "password": password,
-            }
-        ).execute()
-        st.session_state["email"] = email
-        return True
-    
-    return False # User already exists
+    client.table(ALL_USERS_TABLE).insert(
+        {
+            "username": username,
+            "email": email,
+            "password": password,
+        }
+    ).execute()
+    st.session_state["email"] = email
 
 
 if __name__ == "__main__":
@@ -50,13 +47,13 @@ if __name__ == "__main__":
         
     email = st.text_input("Email:")
     if email in emails:
-        st.write("You already have an account. Please login.")
+        st.write("Account already exists. Please login.")
         st.stop()
     
     password = st.text_input("Password:")
     login_press = st.button("Register")
     if username and username not in usernames and email and email not in emails and password and login_press:
-        successful_registration = register(email, password)
+        successful_registration = register(username, email, password)
         if successful_registration:
             st.switch_page("pages/home.py")
     elif not username and login_press:
