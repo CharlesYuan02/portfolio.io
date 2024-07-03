@@ -20,7 +20,7 @@ plotly==5.20.0
 python-dotenv==1.0.1
 streamlit==1.33.0
 st_pages==0.4.5
-supabase==1.0.3
+supabase==2.5.1
 yfinance==0.2.12
 ```
 
