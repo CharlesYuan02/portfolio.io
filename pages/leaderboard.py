@@ -66,30 +66,30 @@ if __name__ == "__main__":
     warnings.simplefilter(action='ignore', category=FutureWarning)
 
     with st.spinner("Loading..."):
-        # Retrieve all users from the users table
-        users = get_users()
+        # Retrieve emails and usernames from users table
+        emails, usernames = get_users()
 
         # Multithread the retrieval of portfolio values for each user
         leaderboard = []
         threads = []
-        for user in users:
-            thread = threading.Thread(target=get_portfolio_value, args=(user,))
+        for i, email in enumerate(emails):
+            thread = threading.Thread(target=get_portfolio_value, args=(email,))
             thread.start()
             threads.append(thread)
             
-            portfolio_names, total_returns = get_portfolio_value(user)
+            portfolio_names, total_returns = get_portfolio_value(email)
             if not portfolio_names or not total_returns:
                 continue
-            for i in range(len(portfolio_names)):
-                total_returns[i] = "{:.2f}%".format(total_returns[i])
-                leaderboard.append((user, portfolio_names[i], total_returns[i]))
+            for j in range(len(portfolio_names)):
+                total_returns[j] = "{:.2f}%".format(total_returns[j])
+                leaderboard.append((usernames[i], portfolio_names[j], total_returns[j]))
 
         for thread in threads:
             thread.join()
         
         # Sort the leaderboard in descending order and display
-        leaderboard.sort(key=lambda x: x[2], reverse=True)
-        df = pd.DataFrame(leaderboard, columns=["Email", "Portfolio Name", "Total Return"])
+        leaderboard.sort(key=lambda x: float(x[2][:-1]), reverse=True)
+        df = pd.DataFrame(leaderboard, columns=["Username", "Portfolio Name", "Total Return"])
         df.index = range(1, len(df) + 1) # Index starting from 1
         st.write("Here are the top portfolios on the platform!")
         st.table(df)
