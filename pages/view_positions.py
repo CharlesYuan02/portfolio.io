@@ -42,7 +42,7 @@ def retrieve_from_supabase(portfolio):
             st.stop()
 
         for _, row in df.iterrows():
-            stock = yf.download(row["stock"], start=row["date_purchased"])
+            stock = yf.download(row["stock"], start=row["date_purchased"], progress=False)
             closing_price = stock["Close"]
             row_price_history = closing_price * row["amount"]
             combined_price_history.append(row_price_history)
