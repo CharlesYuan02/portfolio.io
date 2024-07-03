@@ -1,3 +1,4 @@
 .env
 test.py
+vector_index.json
 **/__pycache__
