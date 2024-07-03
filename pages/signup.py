@@ -2,7 +2,7 @@ import os
 import streamlit as st
 from dotenv import load_dotenv
 from st_pages import Page, show_pages
-from src.utils import get_supabase_client
+from src.utils import get_supabase_client, get_users
 
 
 def register(email, password):
@@ -43,10 +43,25 @@ if __name__ == "__main__":
         ]
     )
 
+    emails, usernames = get_users()
+    username = st.text_input("Username:")
+    if username in usernames:
+        st.write("Username already taken.")
+        
     email = st.text_input("Email:")
+    if email in emails:
+        st.write("You already have an account. Please login.")
+        st.stop()
+    
     password = st.text_input("Password:")
     login_press = st.button("Register")
-    if email and password and login_press:
+    if username and username not in usernames and email and email not in emails and password and login_press:
         successful_registration = register(email, password)
         if successful_registration:
             st.switch_page("pages/home.py")
+    elif not username:
+        st.write("Please enter a username.")
+    elif not email:
+        st.write("Please enter an email.")
+    elif not password:
+        st.write("Please enter a password.")
