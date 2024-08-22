@@ -1,0 +1,58 @@
+.html {
+    overflow: hidden;
+}
+
+body {
+    margin: 0;
+    overflow-y: auto;
+    height: 100vh;
+}
+
+
+.app-container {
+    height: 200vh; /* Makes the container twice the viewport height */
+}
+
+.landing-page {
+    height: 100vh;
+    background-image: url('assets/background.png');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden; /* Prevents extra white space */
+}
+
+.landing-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        to bottom, 
+        #0B004E 0%, 
+        #063259 53%, 
+        #005F59 100%
+    );
+    opacity: 0.75;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.leaderboard-page, .testimonials-page {
+    height: 100vh;
+    position: relative;
+    background: linear-gradient(
+        to bottom, 
+        #0B004E 0%, 
+        #063259 53%, 
+        #005F59 100%
+    );
+}
+
+/* Ensure content is above the gradient overlay */
+.landing-page > *, .leaderboard-page > *, .testimonials-page > * {
+    position: relative;
+    z-index: 2;
+}

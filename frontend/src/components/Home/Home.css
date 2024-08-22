@@ -1,0 +1,54 @@
+.content {
+    display: flex;
+    justify-content: space-between;
+    margin-right: 5%;
+    align-items: center;
+    padding: 2rem;
+    height: calc(100% - 60px);
+    position: relative;
+    z-index: 1;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.text-content {
+    color: white;
+    max-width: 75%;
+    margin-left: 5%;
+}
+
+.text-intro {
+    font-size: 4rem;
+    margin-top: -1rem;
+    text-align: left;
+}
+
+h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+h2 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+}
+
+.cta-button {
+    background-color: #38BC81;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 20px;
+    font-weight: bold;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 16px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.image-content img {
+    width: 100%;
+    height: auto;
+}

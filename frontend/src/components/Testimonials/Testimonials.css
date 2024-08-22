@@ -1,0 +1,78 @@
+.testimonials-container {
+    background: transparent;
+    color: white;
+    padding: 2rem;
+    font-family: 'Montserrat', sans-serif;
+}
+  
+h1 {
+    font-size: 3.5rem;
+    text-align: center;
+    margin-top: 1.1rem;
+}
+
+h2 {
+    font-size: 1.75rem;
+    font-weight: normal;
+    color: #ccc9c9;
+    text-align: center;
+    margin-bottom: 65px;
+    margin-top: 0;
+}
+
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, auto);
+    gap: 2rem;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.testimonial {
+    background-color: #00766f;
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.user-icon {
+    width: 100px;
+    height: 100px;
+    background-color: #ddd;
+    border-radius: 50%;
+    margin-bottom: 1rem;
+}
+
+h3 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+.subreddit {
+    font-size: 1.4rem;
+    margin: 0.2rem 0 0.5rem;
+    opacity: 0.8;
+}
+
+p {
+    text-align: center;
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .testimonials-grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(3, auto);
+    }
+}
+
+@media (max-width: 480px) {
+    .testimonials-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(6, auto);
+    }
+}
