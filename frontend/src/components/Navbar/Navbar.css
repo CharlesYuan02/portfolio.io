@@ -1,0 +1,23 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.logo, .login {
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-left: 0.9rem;
+    margin-right: 0.9rem;
+    margin-bottom: -5rem;
+}
+
+.no-link-style {
+    color: inherit;
+    text-decoration: none;
+}

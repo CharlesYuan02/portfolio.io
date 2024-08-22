@@ -1,0 +1,55 @@
+.top-public-portfolios {
+    background: transparent;
+    color: #fff;
+    padding: 20px;
+    position: relative;
+    z-index: 2;
+    color: white;
+    height: 100vh;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.top-public-portfolios h1 {
+    font-size: 3rem;
+    text-align: left;
+    padding-bottom: 1rem;
+}
+
+.top-public-portfolios table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.top-public-portfolios thead th {
+    font-size: 2rem;
+    background: transparent;
+    text-align: left;
+    padding: 10px;
+    padding-bottom: 2rem;
+}
+
+.top-public-portfolios tbody tr {
+    background-color: rgba(255, 255, 255, 0.05);
+    transition: background-color 0.3s;
+}
+
+.top-public-portfolios tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.top-public-portfolios tbody td {
+    font-size: 1.75rem;
+    text-align: left;
+    padding: 10px;
+}
+
+.top-public-portfolios tbody td:first-child {
+    width: 50px;
+    text-align: center;
+}
+
+.top-public-portfolios tbody td img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}

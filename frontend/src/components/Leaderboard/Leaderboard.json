@@ -1,0 +1,83 @@
+[
+    {
+      "rank": 1,
+      "profilePic": "https://via.placeholder.com/50",
+      "username": "Warren Buffet",
+      "portfolioName": "Berkshire Hathaway",
+      "gain": "76.5%",
+      "timeSinceIncp": "7 yr 3 mo"
+    },
+    {
+      "rank": 2,
+      "profilePic": "https://via.placeholder.com/50",
+      "username": "Peter Lynch",
+      "portfolioName": "Magellan Fund",
+      "gain": "43.3%",
+      "timeSinceIncp": "4 yr 2 mo"
+    },
+    {
+      "rank": 3,
+      "profilePic": "https://via.placeholder.com/50",
+      "username": "Carl Icahn",
+      "portfolioName": "Icahn Capital Management",
+      "gain": "21.8%",
+      "timeSinceIncp": "2 yr 9 mo"
+    },
+    {
+      "rank": 4,
+      "profilePic": "https://via.placeholder.com/50",
+      "username": "Bill Ackman",
+      "portfolioName": "Pershing Square Holdings",
+      "gain": "13.3%",
+      "timeSinceIncp": "1 yr 2 mo"
+    },
+    {
+      "rank": 5,
+      "profilePic": "https://via.placeholder.com/50",
+      "username": "Ray Dalio",
+      "portfolioName": "Bridgewater Associates",
+      "gain": "12.1%",
+      "timeSinceIncp": "1 yr 1 mo"
+    },
+    {
+      "rank": 6,
+      "profilePic": "https://via.placeholder.com/50",
+      "username": "Benjamin Graham",
+      "portfolioName": "Benjamin Graham Portfolio",
+      "gain": "11.7%",
+      "timeSinceIncp": "1 yr 2 mo"
+    },
+    {
+      "rank": 7,
+      "profilePic": "https://via.placeholder.com/50",
+      "username": "Michael Burry",
+      "portfolioName": "Scion Asset Management",
+      "gain": "10.9%",
+      "timeSinceIncp": "2 yr 3 mo"
+    },
+    {
+      "rank": 8,
+      "profilePic": "https://via.placeholder.com/50",
+      "username": "Cathie Wood",
+      "portfolioName": "ARK Innovation ETF",
+      "gain": "10.3%",
+      "timeSinceIncp": "3 yr 9 mo"
+    },
+    {
+      "rank": 9,
+      "profilePic": "https://via.placeholder.com/50",
+      "username": "Steven Cohen",
+      "portfolioName": "Point72 Asset Management",
+      "gain": "8.3%",
+      "timeSinceIncp": "0 yr 7 mo"
+    },
+    {
+      "rank": 10,
+      "profilePic": "https://via.placeholder.com/50",
+      "username": "Jim Simons",
+      "portfolioName": "Renaissance Technologies",
+      "gain": "7.9%",
+      "timeSinceIncp": "0 yr 3 mo"
+    }
+]
+  
