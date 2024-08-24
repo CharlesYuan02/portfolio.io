@@ -2,7 +2,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 2rem;
+    padding: 2rem 2rem 1rem;
     position: relative;
     z-index: 1;
 }
@@ -12,12 +12,16 @@
     font-family: 'Montserrat', sans-serif;
     font-size: 1.8rem;
     font-weight: bold;
-    margin-left: 0.9rem;
-    margin-right: 0.9rem;
-    margin-bottom: -5rem;
+    margin: 0 0.9rem;
 }
 
-.no-link-style {
-    color: inherit;
-    text-decoration: none;
+.no-style {
+    background: none;
+    border: none; 
+    cursor: pointer; 
+    color: inherit; 
+    font: inherit;
+    font-size: inherit; 
+    padding: 0.5rem 1rem; /* Add some padding for a larger clickable area */
+    display: inline-block; /* Ensure the button takes the full size of its content */
 }
