@@ -14,6 +14,7 @@
     color: white;
     max-width: 75%;
     margin-left: 5%;
+    margin-top: -7rem;
 }
 
 .text-intro {
@@ -51,4 +52,5 @@ h2 {
 .image-content img {
     width: 100%;
     height: auto;
+    margin-top: -7rem;
 }
