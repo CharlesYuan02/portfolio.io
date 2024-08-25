@@ -4,6 +4,8 @@ import Navbar from './components/Navbar/Navbar';
 import Home from './components/Home/Home';
 import Leaderboard from './components/Leaderboard/Leaderboard';
 import Testimonials from './components/Testimonials/Testimonials';
+import CreateUsername from './components/CreateUsername/CreateUsername';
+import Dashboard from './components/Dashboard/Dashboard';
 
 function App() {
     return (
@@ -24,6 +26,8 @@ function App() {
                     </section>
                     </>
                 } />
+                <Route path="/create-username" element={<CreateUsername />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 </Routes>
             </div>
         </Router>
