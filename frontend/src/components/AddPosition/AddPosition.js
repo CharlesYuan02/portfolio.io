@@ -3,14 +3,10 @@ import React, { useState, useEffect} from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useAuth0 } from '@auth0/auth0-react';
-import { createClient } from '@supabase/supabase-js';
+import supabase from '../../utils/CreateSupabaseClient'
 
-const supabaseURL = process.env.REACT_APP_SUPABASE_URL;
-const supabaseKey = process.env.REACT_APP_SUPABASE_API_KEY;
 const portfoliosTable = process.env.REACT_APP_SUPABASE_PORTFOLIOS_TABLE;
 const positionsTable = process.env.REACT_APP_SUPABASE_POSITIONS_TABLE;
-const supabase = createClient(supabaseURL, supabaseKey);
-
 
 const AddPosition = () => {
     const [ticker, setTicker] = useState('');
@@ -22,7 +18,7 @@ const AddPosition = () => {
     const [makePublic, setMakePublic] = useState(true);
     const [error, setError] = useState('');
     const { user } = useAuth0();
-    const { email, sub } = user || {};
+    const { email } = user || {};
 
     /* Retrieve portfolios if user has any */
     const [portfolios, setPortfolios] = useState([]);
@@ -46,7 +42,7 @@ const AddPosition = () => {
     /* Handle submission of new position */
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError('');
+        error && setError(''); // Clear any previous errors
 
         /* If a new portfolio is created, insert into portfolios table */
         if (selectedPortfolio === 'createNew' && newPortfolioName) {
