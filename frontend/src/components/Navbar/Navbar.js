@@ -1,12 +1,9 @@
 import './Navbar.css';
 import { useAuth0 } from '@auth0/auth0-react';
-import { createClient } from '@supabase/supabase-js';
 import { useNavigate } from 'react-router-dom';
+import supabase from '../../utils/CreateSupabaseClient';
 
-const supabaseURL = process.env.REACT_APP_SUPABASE_URL;
-const supabaseKey = process.env.REACT_APP_SUPABASE_API_KEY;
 const usersTable = process.env.REACT_APP_SUPABASE_USERS_TABLE;
-const supabase = createClient(supabaseURL, supabaseKey);
 
 const Navbar = () => {
     const { loginWithRedirect, user } = useAuth0();
@@ -17,7 +14,8 @@ const Navbar = () => {
 
         if (!user) {
             loginWithRedirect({
-                redirectUri: `${window.location.origin}/create-username`
+                screen_hint: 'login',
+                redirectUri: `${window.location.origin}/dashboard`
             });
             return;
         }
