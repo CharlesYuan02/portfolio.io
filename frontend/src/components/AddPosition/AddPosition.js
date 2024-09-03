@@ -30,7 +30,6 @@ const AddPosition = () => {
                     .select('portfolio')
                     .eq('email', email);
                 if (error) throw error;
-                console.log('Portfolios:', data);
                 setPortfolios(data.map((portfolio) => portfolio.portfolio));
             } catch (error) {
                 console.error('Error fetching portfolios:', error);
