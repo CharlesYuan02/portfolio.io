@@ -2,3 +2,6 @@
 test.py
 vector_index.json
 **/__pycache__
+**/node_modules
+frontend/.gitignore
+frontend/README.md

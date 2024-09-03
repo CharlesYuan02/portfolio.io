@@ -1,43 +1,66 @@
 import './Dashboard.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { PieChart, Pie, Cell, Legend } from 'recharts';
 import { useAuth0 } from '@auth0/auth0-react';
+import axios from 'axios';
 import AddPosition from '../AddPosition/AddPosition';
-
-// Dummy data for the line chart
-const performanceData = [
-    { date: '2024-01', value: 1000 },
-    { date: '2024-02', value: 1200 },
-    { date: '2024-03', value: 1100 },
-    { date: '2024-04', value: 1400 },
-    { date: '2024-05', value: 1300 },
-    { date: '2024-06', value: 1600 },
-];
-
-// Dummy data for the pie chart
-const holdingsData = [
-    { name: 'Unilever', value: 31.5 },
-    { name: 'Proctor & Gamble', value: 30.5 },
-    { name: 'Dial', value: 19 },
-    { name: 'Colgate-Palmolive', value: 8 },
-    { name: 'All others', value: 11 },
-];
-
-// Dummy data for the positions table
-const positionsData = [
-    { stock: 'AAPL', price: 226.13, shares: 3, date: '08/30/2024' },
-    { stock: 'GOOGL', price: 138.21, shares: 5, date: '08/29/2024' },
-    { stock: 'MSFT', price: 328.66, shares: 2, date: '08/28/2024' },
-];
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
 const Dashboard = () => {
+    const { user, logout } = useAuth0();
     const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [performanceData, setPerformanceData] = useState([]);
+    const [holdingsData, setHoldingsData] = useState([]);
+    const [historyData, setHistoryData] = useState([]);
+    const [selectedPortfolio, setSelectedPortfolio] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    /* Make initial call to retrieve data from Supabase and populate backend cache */
+    useEffect(() => {
+        if (!user) return;
+
+        const fetchPortfolios = async () => {
+            try {
+                const response = await axios.post('/backend/all_portfolios/', { email: user.email });
+                if (response.data.length > 0) setSelectedPortfolio(response.data[0]);
+            } catch (err) {
+                setError(err.message);
+            }
+        };
+
+        fetchPortfolios();
+    }, [user]);
+
+    /* Obtain data for performance, holdings, history */
+    useEffect(() => {
+        if (!user || !selectedPortfolio) return;
+
+        const fetchPortfolioData = async () => {
+            setIsLoading(true);
+            try {
+                const [performanceRes, holdingsRes, historyRes] = await Promise.all([
+                    axios.post('/backend/portfolio_performance/', { email: user.email, portfolio: selectedPortfolio }),
+                    axios.post('/backend/portfolio_holdings/', { email: user.email, portfolio: selectedPortfolio }),
+                    axios.post('/backend/portfolio_history/', { email: user.email, portfolio: selectedPortfolio }),
+                ]);
+
+                setPerformanceData(performanceRes.data.map(([date, value]) => ({ date, value })));
+                setHoldingsData(Object.entries(holdingsRes.data).map(([name, { total_value }]) => ({ name, value: total_value })));
+                setHistoryData(historyRes.data);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchPortfolioData();
+    }, [user, selectedPortfolio]);
 
     /* Lazy loading */
-    const { user, logout } = useAuth0();
     if (!user) {
         return <div>Loading...</div>;
     }
@@ -78,13 +101,13 @@ const Dashboard = () => {
         <div className="dashboard-grid">
             <div className="chart-container performance-chart">
             <h2 className="chart-title">Portfolio Performance</h2>
-            <ResponsiveContainer width="100%" height={280}>
+            <ResponsiveContainer width="95%" height={280}>
                 <LineChart data={performanceData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
-                <YAxis />
+                <YAxis dataKey="value" tickFormatter={(value) => value.toFixed(0)} domain={['dataMin', 'dataMax']}/>
                 <Tooltip />
-                <Line type="monotone" dataKey="value" stroke="#8884d8" />
+                <Line type="monotone" dataKey="value" stroke="#38BC81" />
                 </LineChart>
             </ResponsiveContainer>
             </div>
@@ -101,12 +124,12 @@ const Dashboard = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {positionsData.map((position, index) => (
+                {historyData.map((position, index) => (
                     <tr key={index}>
                     <td>{position.stock}</td>
-                    <td>${position.price.toFixed(2)}</td>
-                    <td>{position.shares}</td>
-                    <td>{position.date}</td>
+                    <td>${position.unit_price.toFixed(2)}</td>
+                    <td>{position.amount}</td>
+                    <td>{position.date_purchased}</td>
                     </tr>
                 ))}
                 </tbody>
