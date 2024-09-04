@@ -8,6 +8,19 @@ import AddPosition from '../AddPosition/AddPosition';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
+const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+        const roundedValue = Number(payload[0].value).toFixed(2);
+        return (
+          <div className="bg-white border border-gray-300 p-2 shadow-md">
+            <p className="text-gray-700">{`Date: ${label}`}</p>
+            <p className="text-gray-700">{`Value: ${roundedValue}`}</p>
+          </div>
+        );
+    }
+    return null;
+};
+
 const Dashboard = () => {
     const { user, logout } = useAuth0();
     const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -106,7 +119,7 @@ const Dashboard = () => {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
                 <YAxis dataKey="value" tickFormatter={(value) => value.toFixed(0)} domain={['dataMin', 'dataMax']}/>
-                <Tooltip />
+                <Tooltip content={<CustomTooltip />} />
                 <Line type="monotone" dataKey="value" stroke="#38BC81" />
                 </LineChart>
             </ResponsiveContainer>
