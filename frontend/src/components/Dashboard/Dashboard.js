@@ -27,6 +27,7 @@ const Dashboard = () => {
     const [performanceData, setPerformanceData] = useState([]);
     const [holdingsData, setHoldingsData] = useState([]);
     const [historyData, setHistoryData] = useState([]);
+    const [portfolios, setPortfolios] = useState([]);
     const [selectedPortfolio, setSelectedPortfolio] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -38,6 +39,7 @@ const Dashboard = () => {
         const fetchPortfolios = async () => {
             try {
                 const response = await axios.post('/backend/all_portfolios/', { email: user.email });
+                setPortfolios(response.data);
                 if (response.data.length > 0) setSelectedPortfolio(response.data[0]);
             } catch (err) {
                 setError(err.message);
@@ -90,6 +92,10 @@ const Dashboard = () => {
         logout({ returnTo: window.location.origin });
     };
 
+    const handlePortfolioChange = (event) => {
+        setSelectedPortfolio(event.target.value);
+    };
+
     return (
         <div className="dashboard">
         <div className="dashboard-header">
@@ -104,7 +110,27 @@ const Dashboard = () => {
                 <AddPosition />
             </div>
 
+            <button className="open-popup-btn">
+                Sell Position
+            </button>
+
+            <button className="open-popup-btn">
+                Chatbot
+            </button>
+
             <h1 className="dashboard-title">{dashboardName}</h1>
+
+            <select 
+                value={selectedPortfolio} 
+                onChange={handlePortfolioChange}
+                className="portfolio-selector"
+            >
+                {portfolios.map((portfolio) => (
+                    <option key={portfolio} value={portfolio}>
+                        {portfolio}
+                    </option>
+                ))}
+            </select>
 
             <button className="logout-button" onClick={handleLogout}>
                 Log Out
