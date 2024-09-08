@@ -73,7 +73,8 @@ def cache_all_portfolios(client, table_name, email, portfolios):
         info["performance"] = portfolio_value_over_time
 
         # Store in cache with email, portfolio as key
-        cache_key = f"{email}_{portfolio}"
+        portfolio_name = portfolio.replace(" ", "_").lower()
+        cache_key = f"{email}_{portfolio_name}"
         cache.set(cache_key, info) # Timeout is set in settings, 3600s
 
 
@@ -109,6 +110,7 @@ def get_all_portfolios(request):
     return JsonResponse(portfolios, safe=False) # , {row["portfolio"]: row["is_public"] for row in response.data}
 
 
+
 @require_http_methods(["POST"])
 @csrf_exempt
 def get_portfolio_performance(request):
@@ -116,9 +118,10 @@ def get_portfolio_performance(request):
     data = json.loads(request.body.decode("utf-8"))
     email = data["email"]
     portfolio = data["portfolio"]
+    portfolio_name = portfolio.replace(" ", "_").lower()
 
     # Fetch the portfolio performance data from the cache
-    cache_key = f"{email}_{portfolio}"
+    cache_key = f"{email}_{portfolio_name}"
     portfolio_data = cache.get(cache_key)
     return JsonResponse(portfolio_data["performance"], safe=False)
 
@@ -130,9 +133,10 @@ def get_portfolio_holdings(request):
     data = json.loads(request.body.decode("utf-8"))
     email = data["email"]
     portfolio = data["portfolio"]
+    portfolio_name = portfolio.replace(" ", "_").lower()
 
     # Fetch the portfolio holdings data from the cache
-    cache_key = f"{email}_{portfolio}"
+    cache_key = f"{email}_{portfolio_name}"
     portfolio_data = cache.get(cache_key)
     return JsonResponse(portfolio_data["positions"])
 
@@ -144,8 +148,9 @@ def get_portfolio_history(request):
     data = json.loads(request.body.decode("utf-8"))
     email = data["email"]
     portfolio = data["portfolio"]
+    portfolio_name = portfolio.replace(" ", "_").lower()
 
     # Fetch the portfolio history data from the cache
-    cache_key = f"{email}_{portfolio}"
+    cache_key = f"{email}_{portfolio_name}"
     portfolio_data = cache.get(cache_key)
     return JsonResponse(portfolio_data["history"], safe=False)
