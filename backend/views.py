@@ -1,7 +1,7 @@
 import json
 import os
-import pandas as pd
 import yfinance as yf
+from collections import defaultdict
 from django.core.cache import cache
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
@@ -30,8 +30,10 @@ def cache_all_portfolios(client, table_name, email, portfolios):
         }
 
         # Sum up the total value of each stock in the portfolio
+        combined_price_history = defaultdict(float)
         for row in response.data:
             stock, amount, total_price = row["stock"], row["amount"], row["total_price"]
+            stock_data = yf.download(stock, start=row["date_purchased"], progress=False)
 
             if stock in info["positions"]:
                 info["positions"][stock]["total_value"] += total_price
@@ -44,33 +46,20 @@ def cache_all_portfolios(client, table_name, email, portfolios):
 
             # Populate history of transactions
             info["history"].append({
-                "stock": row["stock"],
-                "amount": row["amount"],
+                "stock": stock,
+                "amount": amount,
                 "unit_price": row["unit_price"],
-                "total_price": row["total_price"],
+                "total_price": total_price,
                 "date_purchased": row["date_purchased"]
             })
 
-        # Calculate performance of portfolio over time
-        df = pd.DataFrame.from_dict(response.data)
-        grouped = df.groupby("stock")
-        combined_price_history = pd.DataFrame()
+            # Update combined_price_history
+            for date, row in stock_data.iterrows():
+                date = date.strftime("%Y-%m-%d")
+                combined_price_history[date] += row['Close'] * amount
 
-        # Iterate over groups and calculate price history in bulk
-        for stock, group in grouped:
-            stock_data = yf.download(stock, start=group["date_purchased"].min(), progress=False)
-            for _, row in group.iterrows():
-                # Filter stock data starting from date_purchased
-                relevant_data = stock_data.loc[row["date_purchased"]:]
-                combined_price_history[row["stock"]] = relevant_data["Close"] * row["amount"]
-
-        # Sum across rows to get total portfolio value
-        combined_price_history.index = combined_price_history.index.strftime("%Y-%m-%d")
-        combined_price_history["total_value"] = combined_price_history.sum(axis=1)
-        portfolio_value_over_time = combined_price_history[["total_value"]].reset_index().values.tolist()
-        
-        # Store in cache
-        info["performance"] = portfolio_value_over_time
+        combined_price_history = sorted([[date, value] for date, value in combined_price_history.items()])
+        info["performance"] = combined_price_history
 
         # Store in cache with email, portfolio as key
         portfolio_name = portfolio.replace(" ", "_").lower()

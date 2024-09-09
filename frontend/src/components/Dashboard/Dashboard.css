@@ -90,7 +90,7 @@
     background-color: #383838;
 }
 
-.add-position-popup {
+.add-position-popup, .sell-position-popup {
     position: fixed;
     top: 0;
     left: -400px;
@@ -103,7 +103,7 @@
     padding: 20px;
 }
 
-.add-position-popup.open {
+.add-position-popup.open, .sell-position-popup.open {
     left: -10px;
 }
 
