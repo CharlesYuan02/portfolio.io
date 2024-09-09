@@ -5,6 +5,7 @@ import { PieChart, Pie, Cell, Legend } from 'recharts';
 import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 import AddPosition from '../AddPosition/AddPosition';
+import SellPosition from '../SellPosition/SellPosition';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
@@ -23,12 +24,16 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 const Dashboard = () => {
     const { user, logout } = useAuth0();
-    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [isAddPositionPopupOpen, setIsAddPositionPopupOpen] = useState(false);
+    const [isSellPositionPopupOpen, setIsSellPositionPopupOpen] = useState(false);
+    const [isChatbotPopupOpen, setIsChatbotPopupOpen] = useState(false);
     const [performanceData, setPerformanceData] = useState([]);
     const [holdingsData, setHoldingsData] = useState([]);
     const [historyData, setHistoryData] = useState([]);
     const [portfolios, setPortfolios] = useState([]);
     const [selectedPortfolio, setSelectedPortfolio] = useState(null);
+    const [resetAddPosition, setResetAddPosition] = useState(false); // For resetting success/error messages 
+    const [resetSellPosition, setResetSellPosition] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -84,8 +89,22 @@ const Dashboard = () => {
     const { name } = user || {};
     const dashboardName = name.endsWith("s") ? `${name}' Dashboard` : `${name}'s Dashboard`;
 
-    const togglePopup = () => {
-        setIsPopupOpen(!isPopupOpen);
+    const toggleAddPositionPopup = () => {
+        setIsAddPositionPopupOpen(!isAddPositionPopupOpen);
+        if (isAddPositionPopupOpen) {
+            setResetAddPosition(true);
+        }
+    };
+
+    const toggleSellPositionPopup = () => {
+        setIsSellPositionPopupOpen(!isSellPositionPopupOpen);
+        if (isSellPositionPopupOpen) {
+            setResetSellPosition(true);
+        }
+    };
+
+    const toggleChatbotPopup = () => {
+        setIsChatbotPopupOpen(!isChatbotPopupOpen);
     };
 
     const handleLogout = () => {
@@ -99,22 +118,29 @@ const Dashboard = () => {
     return (
         <div className="dashboard">
         <div className="dashboard-header">
-            <button className="open-popup-btn" onClick={togglePopup}>
+            <button className="open-popup-btn" onClick={toggleAddPositionPopup}>
                 Add Position
             </button>
 
-            <div className={`add-position-popup ${isPopupOpen ? 'open' : ''}`}>
-                <button className="close-popup-btn" onClick={togglePopup}>
-                &times;
+            <div className={`add-position-popup ${isAddPositionPopupOpen ? 'open' : ''}`}>
+                <button className="close-popup-btn" onClick={toggleAddPositionPopup}>
+                    &times;
                 </button>
-                <AddPosition />
+                <AddPosition resetTrigger={resetAddPosition} onResetComplete={() => setResetAddPosition(false)} />
             </div>
 
-            <button className="open-popup-btn">
+            <button className="open-popup-btn" onClick={toggleSellPositionPopup}>
                 Sell Position
             </button>
 
-            <button className="open-popup-btn">
+            <div className={`sell-position-popup ${isSellPositionPopupOpen ? 'open' : ''}`}>
+                <button className="close-popup-btn" onClick={toggleSellPositionPopup}>
+                    &times;
+                </button>
+                <SellPosition resetTrigger={resetSellPosition} onResetComplete={() => setResetSellPosition(false)} />
+            </div>
+
+            <button className="open-popup-btn" onClick={toggleChatbotPopup}>
                 Chatbot
             </button>
 
@@ -140,7 +166,7 @@ const Dashboard = () => {
         <div className="dashboard-grid">
             <div className="chart-container performance-chart">
             <h2 className="chart-title">Portfolio Performance</h2>
-            <ResponsiveContainer width="95%" height={280}>
+            <ResponsiveContainer width="93%" height={280}>
                 <LineChart data={performanceData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
@@ -160,6 +186,7 @@ const Dashboard = () => {
                     <th>Price</th>
                     <th>Shares</th>
                     <th>Date</th>
+                    <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -167,8 +194,9 @@ const Dashboard = () => {
                     <tr key={index}>
                     <td>{position.stock}</td>
                     <td>${position.unit_price.toFixed(2)}</td>
-                    <td>{position.amount}</td>
+                    <td>{position.amount > 0 ? position.amount : -1 * position.amount}</td>
                     <td>{position.date_purchased}</td>
+                    <td>{position.amount > 0 ? 'Buy' : 'Sell'}</td>
                     </tr>
                 ))}
                 </tbody>
@@ -182,7 +210,7 @@ const Dashboard = () => {
                 <Pie
                     data={holdingsData}
                     cx="50%"
-                    cy="40%"
+                    cy="43%"
                     labelLine={false}
                     outerRadius={100}
                     fill="#8884d8"
@@ -193,7 +221,7 @@ const Dashboard = () => {
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                 </Pie>
-                <Legend wrapperStyle={{bottom: 45}}/>
+                <Legend wrapperStyle={{bottom: 40}}/>
                 </PieChart>
             </ResponsiveContainer>
             </div>
