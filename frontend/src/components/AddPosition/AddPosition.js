@@ -8,7 +8,7 @@ import supabase from '../../utils/CreateSupabaseClient'
 const portfoliosTable = process.env.REACT_APP_SUPABASE_PORTFOLIOS_TABLE;
 const positionsTable = process.env.REACT_APP_SUPABASE_POSITIONS_TABLE;
 
-const AddPosition = () => {
+const AddPosition = ({ resetTrigger, onResetComplete }) => {
     const [ticker, setTicker] = useState('');
     const [amount, setAmount] = useState('');
     const [datePurchased, setDatePurchased] = useState(new Date());
@@ -17,8 +17,25 @@ const AddPosition = () => {
     const [newPortfolioName, setNewPortfolioName] = useState('');
     const [makePublic, setMakePublic] = useState(true);
     const [error, setError] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
     const { user } = useAuth0();
     const { email } = user || {};
+
+    /* Reset success/error messages when resetTrigger is true */
+    useEffect(() => {
+        if (resetTrigger) {
+            setError('')
+            setSuccessMessage('');
+            setTicker('')
+            setAmount('');
+            setDatePurchased(new Date());
+            setPurchasePrice('');
+            setSelectedPortfolio('');
+            setNewPortfolioName('');
+            setMakePublic(true);
+            onResetComplete();
+        }
+    }, [resetTrigger, onResetComplete]);
 
     /* Retrieve portfolios if user has any */
     const [portfolios, setPortfolios] = useState([]);
@@ -38,10 +55,10 @@ const AddPosition = () => {
         fetchPortfolios();
     }, [email]);
 
-    /* Handle submission of new position */
+    /* Handle submission of new buy position */
     const handleSubmit = async (e) => {
         e.preventDefault();
-        error && setError(''); // Clear any previous errors
+        error && setError('') && setSuccessMessage(''); // Clear any previous errors
 
         /* If a new portfolio is created, insert into portfolios table */
         if (selectedPortfolio === 'createNew' && newPortfolioName) {
@@ -82,6 +99,7 @@ const AddPosition = () => {
                 ]);
             if (error) throw error;
             console.log('Position stored successfully:', data);
+            setSuccessMessage('Buy position added successfully!');
 
         } catch (error) {
             console.error('Error storing position:', error);
@@ -199,8 +217,13 @@ const AddPosition = () => {
                     </div>
                 </>
             )}
+
+            {error && <div className="error-message">{error}</div>}
+            {successMessage && <div className="success-message">{successMessage}</div>}
     
-            <button type="submit" className="submit-btn">Add Position</button>
+            {!successMessage && (
+                    <button type="submit" className="submit-btn">Add Position</button>
+            )}
           </form>
         </div>
     );
