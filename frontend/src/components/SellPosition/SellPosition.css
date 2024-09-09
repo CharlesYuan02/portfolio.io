@@ -1,0 +1,146 @@
+* {
+    font-family: 'Montserrat', sans-serif;
+}
+
+.title {
+    text-align: center;
+    color: black;
+    font-weight: bold;
+}
+
+.add-position-container {
+    max-width: 300px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+    align-self: flex-start;
+}
+
+.input-wrapper {
+    width: 300px;  /* Adjust this value to control the width of the inputs */
+}
+
+input[type="text"],
+input[type="number"],
+select,
+.react-datepicker-wrapper {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+input[type="text"],
+input[type="number"],
+select,
+.react-datepicker__input-container input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* For Make Portfolio Public checkbox */
+.make-public-group {
+    display: flex;
+    align-items: center;
+}
+
+.make-public-group label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.make-public-group input[type="checkbox"] {
+    margin-left: 10px;
+}
+
+input[type='checkbox'] {
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 5px;
+    border: 2px solid #555;
+}
+
+.react-datepicker-wrapper,
+.react-datepicker__input-container {
+    display: block;
+    width: 100%;
+}
+
+.react-datepicker__input-container input {
+    width: 100%;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.submit-btn {
+    margin: 0 auto; /* Center the button */
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #38BC81;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+    background-color: #38bc81bd;
+}
+
+.date-picker {
+    width: 100%;
+}
+
+.error-message {
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+}
+
+.success-message {
+    color: #155724;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+}
