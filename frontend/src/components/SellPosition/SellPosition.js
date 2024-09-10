@@ -4,6 +4,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useAuth0 } from '@auth0/auth0-react';
 import supabase from '../../utils/CreateSupabaseClient'
+import axios from 'axios';
 
 const portfoliosTable = process.env.REACT_APP_SUPABASE_PORTFOLIOS_TABLE;
 const positionsTable = process.env.REACT_APP_SUPABASE_POSITIONS_TABLE;
@@ -55,6 +56,22 @@ const SellPosition = ({ resetTrigger, onResetComplete }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         error && setError('') && setSuccessMessage(''); // Clear any previous errors
+
+        /* Check if form fields are valid */
+        if (dateSold > new Date()) {
+            setError('Date sold cannot be in the future.');
+            return;
+        } else {
+            try {
+                const response = await axios.post('/backend/daily_price_range/', { ticker: ticker, date: dateSold });
+                if (response.data[0] > sellPrice || response.data[1] < sellPrice) {
+                    setError('Sell price is not within the daily price range for the selected date.');
+                    return;
+                }
+            } catch (err) {
+                setError(err.message);
+            }
+        }
 
         /* Get all positions in selectedPortfolio to ensure user has enough to sell */
         try {
