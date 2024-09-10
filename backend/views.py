@@ -7,7 +7,8 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from dotenv import load_dotenv
-from .utils import get_supabase_client
+from .utils import get_supabase_client, retrieve_tickers
+from .rag.chatbot import vector_search
 
 
 def cache_all_portfolios(client, table_name, email, portfolios):
@@ -52,6 +53,7 @@ def cache_all_portfolios(client, table_name, email, portfolios):
                 "total_price": total_price,
                 "date_purchased": row["date_purchased"]
             })
+            info["history"] = sorted(info["history"], key=lambda x: x["date_purchased"])
 
             # Update combined_price_history
             for date, row in stock_data.iterrows():
@@ -71,7 +73,7 @@ def cache_all_portfolios(client, table_name, email, portfolios):
 @csrf_exempt
 def get_all_portfolios(request):
     '''
-    Helper function for retrieving all the portfolios for a given user.
+    Endpoint for retrieving all the portfolios for a given user.
 
     Args:
         email (str): The user's email
@@ -103,6 +105,17 @@ def get_all_portfolios(request):
 @require_http_methods(["POST"])
 @csrf_exempt
 def get_portfolio_performance(request):
+    '''
+    Endpoint for retrieving the performance of a given portfolio.
+
+    Args:
+        email (str): The user's email
+        portfolio (str): The name of the portfolio
+
+    Returns:
+        performance (list): A list of the portfolio's performance data
+        [[date, total_value], ...]
+    '''
     # Extract email and portfolio from POST request body
     data = json.loads(request.body.decode("utf-8"))
     email = data["email"]
@@ -118,6 +131,17 @@ def get_portfolio_performance(request):
 @require_http_methods(["POST"])
 @csrf_exempt
 def get_portfolio_holdings(request):
+    '''
+    Endpoint for retrieving the holdings of a given portfolio.
+
+    Args:
+        email (str): The user's email
+        portfolio (str): The name of the portfolio
+
+    Returns:
+        positions (dict): A dictionary of the portfolio's positions
+        {stock: {total_value, total_shares}}    
+    '''
     # Extract email and portfolio from POST request body
     data = json.loads(request.body.decode("utf-8"))
     email = data["email"]
@@ -133,6 +157,17 @@ def get_portfolio_holdings(request):
 @require_http_methods(["POST"])
 @csrf_exempt
 def get_portfolio_history(request):
+    '''
+    Endpoint for retrieving the history of a given portfolio.
+
+    Args:
+        email (str): The user's email
+        portfolio (str): The name of the portfolio
+
+    Returns:
+        history (list): A list of the portfolio's history data
+        [{stock, amount, unit_price, date_purchased, action}]
+    '''
     # Extract email and portfolio from POST request body
     data = json.loads(request.body.decode("utf-8"))
     email = data["email"]
@@ -143,3 +178,40 @@ def get_portfolio_history(request):
     cache_key = f"{email}_{portfolio_name}"
     portfolio_data = cache.get(cache_key)
     return JsonResponse(portfolio_data["history"], safe=False)
+
+
+@require_http_methods(["GET"])
+@csrf_exempt
+def get_tickers(request):
+    '''
+    Endpoint for retrieving all the unique stock tickers from the Pinecone index metadata.
+
+    Returns:
+        tickers (list): A list of all unique stock tickers
+    '''
+    load_dotenv()
+    tickers = retrieve_tickers()
+    return JsonResponse(tickers, safe=False)
+
+
+@require_http_methods(["POST"])
+@csrf_exempt
+def get_chatbot_response(request):
+    '''
+    Endpoint for retrieving the chatbot response given a user query.
+
+    Args:
+        ticker (str): The stock ticker (e.g. AAPL) specified for filtering.
+        query (str): The question inputted by the user.
+    
+    Returns:
+        response (str): The chatbot's answer.
+    '''
+    # Extract ticker and query from POST request body
+    data = json.loads(request.body.decode("utf-8"))
+    ticker = data["ticker"]
+    query = data["query"]
+
+    # Perform vector search and generate chatbot response
+    response = vector_search(ticker, query)
+    return JsonResponse(response, safe=False)

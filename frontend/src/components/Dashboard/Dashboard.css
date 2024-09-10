@@ -103,8 +103,26 @@
     padding: 20px;
 }
 
+/* Bottom right instead of top left */
+.chatbot-popup {
+    position: fixed;
+    top: 50%;
+    right: -600px;
+    width: 500px; /* Ensure this is the same as the width in Chatbot.css */
+    height: 100%;
+    background-color: transparent;
+    transition: right 0.3s ease-in-out;
+    z-index: 1000;
+    overflow-y: auto;
+    padding: 20px;
+}
+
 .add-position-popup.open, .sell-position-popup.open {
     left: -10px;
+}
+
+.chatbot-popup.open {
+    right: 20px;
 }
 
 .close-popup-btn {
@@ -116,6 +134,17 @@
     font-size: 36px;
     cursor: pointer;
     color: black;
+}
+
+.close-popup-btn-chatbot {
+    position: absolute;
+    top: 15px;
+    right: 21px;
+    background: none;
+    border: none;
+    font-size: 36px;
+    cursor: pointer;
+    color: white;
 }
 
 .portfolio-selector {

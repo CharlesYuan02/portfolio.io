@@ -6,6 +6,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 import AddPosition from '../AddPosition/AddPosition';
 import SellPosition from '../SellPosition/SellPosition';
+import Chatbot from '../Chatbot/Chatbot';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
@@ -34,6 +35,7 @@ const Dashboard = () => {
     const [selectedPortfolio, setSelectedPortfolio] = useState(null);
     const [resetAddPosition, setResetAddPosition] = useState(false); // For resetting success/error messages 
     const [resetSellPosition, setResetSellPosition] = useState(false);
+    const [resetChatbot, setResetChatbot] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -105,6 +107,9 @@ const Dashboard = () => {
 
     const toggleChatbotPopup = () => {
         setIsChatbotPopupOpen(!isChatbotPopupOpen);
+        if (isChatbotPopupOpen) {
+            setResetChatbot(true);
+        }
     };
 
     const handleLogout = () => {
@@ -143,6 +148,13 @@ const Dashboard = () => {
             <button className="open-popup-btn" onClick={toggleChatbotPopup}>
                 Chatbot
             </button>
+
+            <div className={`chatbot-popup ${isChatbotPopupOpen ? 'open' : ''}`}>
+                <button className="close-popup-btn-chatbot" onClick={toggleChatbotPopup}>
+                    &times;
+                </button>
+                <Chatbot resetTrigger={resetChatbot} onResetComplete={() => setResetChatbot(false)} />
+            </div>
 
             <h1 className="dashboard-title">{dashboardName}</h1>
 
