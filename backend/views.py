@@ -2,11 +2,11 @@ import json
 import os
 import yfinance as yf
 from collections import defaultdict
+from datetime import datetime, timedelta
 from django.core.cache import cache
 from django.http import JsonResponse
-from django.views.decorators.http import require_http_methods
-from django.views.decorators.csrf import csrf_exempt
 from dotenv import load_dotenv
+from rest_framework.decorators import api_view
 from .utils import get_supabase_client, retrieve_tickers
 from .rag.chatbot import vector_search
 
@@ -69,8 +69,7 @@ def cache_all_portfolios(client, table_name, email, portfolios):
         cache.set(cache_key, info) # Timeout is set in settings, 3600s
 
 
-@require_http_methods(["POST"])
-@csrf_exempt
+@api_view(["POST"])
 def get_all_portfolios(request):
     '''
     Endpoint for retrieving all the portfolios for a given user.
@@ -101,9 +100,7 @@ def get_all_portfolios(request):
     return JsonResponse(portfolios, safe=False) # , {row["portfolio"]: row["is_public"] for row in response.data}
 
 
-
-@require_http_methods(["POST"])
-@csrf_exempt
+@api_view(["POST"])
 def get_portfolio_performance(request):
     '''
     Endpoint for retrieving the performance of a given portfolio.
@@ -128,8 +125,7 @@ def get_portfolio_performance(request):
     return JsonResponse(portfolio_data["performance"], safe=False)
 
 
-@require_http_methods(["POST"])
-@csrf_exempt
+@api_view(["POST"])
 def get_portfolio_holdings(request):
     '''
     Endpoint for retrieving the holdings of a given portfolio.
@@ -154,8 +150,7 @@ def get_portfolio_holdings(request):
     return JsonResponse(portfolio_data["positions"])
 
 
-@require_http_methods(["POST"])
-@csrf_exempt
+@api_view(["POST"])
 def get_portfolio_history(request):
     '''
     Endpoint for retrieving the history of a given portfolio.
@@ -180,8 +175,33 @@ def get_portfolio_history(request):
     return JsonResponse(portfolio_data["history"], safe=False)
 
 
-@require_http_methods(["GET"])
-@csrf_exempt
+@api_view(["POST"])
+def get_daily_price_range(request):
+    '''
+    Endpoint for retrieving the daily price range of a given stock.
+    
+    Args:
+        ticker (str): The stock ticker (e.g. AAPL)
+        date (str): The date for which the price range is requested (YYYY-MM-DD)
+    
+    Returns:
+        price_range (tuple): A tuple containing the stock's daily price range (low, high)
+    '''
+    # Extract ticker from POST request body
+    data = json.loads(request.body.decode("utf-8"))
+    ticker = data["ticker"]
+    date_str = data["date"].split("T")[0] # Remove timezone info
+    date = datetime.strptime(date_str, "%Y-%m-%d")
+
+    # Fetch the daily price range of the stock
+    next_day = date + timedelta(days=1)
+    next_day_str = next_day.strftime("%Y-%m-%d")
+    stock_data = yf.download(ticker, start=date_str, end=next_day_str, progress=False)
+    low, high = stock_data["Low"].values[0], stock_data["High"].values[0]
+    return JsonResponse((low, high), safe=False)
+
+
+@api_view(["GET"])
 def get_tickers(request):
     '''
     Endpoint for retrieving all the unique stock tickers from the Pinecone index metadata.
@@ -194,8 +214,7 @@ def get_tickers(request):
     return JsonResponse(tickers, safe=False)
 
 
-@require_http_methods(["POST"])
-@csrf_exempt
+@api_view(["POST"])
 def get_chatbot_response(request):
     '''
     Endpoint for retrieving the chatbot response given a user query.
