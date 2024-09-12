@@ -3,9 +3,6 @@ langchain==0.1.20
 langchain-pinecone==0.1.1
 langchain-openai==0.1.7
 openai==1.30.1
-plotly==5.20.0
 python-dotenv==1.0.1
-streamlit==1.33.0
-st_pages==0.4.5
 supabase==2.5.1
 yfinance==0.2.12
