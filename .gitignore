@@ -5,3 +5,9 @@ vector_index.json
 **/node_modules
 frontend/.gitignore
 frontend/README.md
+
+# Old Streamlit files
+.devcontainer
+pages
+src
+app.py
