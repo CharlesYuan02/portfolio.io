@@ -9,5 +9,10 @@
             "src": "/(.*)",
             "dest": "backend/wsgi.py"
         }
-    ]
+    ],
+    "functions": {
+        "frontend/**": {
+            "excludeFiles": "{.next,*.cache,node_modules,public,app}/**"
+        }
+    }
 }
