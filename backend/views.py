@@ -201,6 +201,30 @@ def get_daily_price_range(request):
     return JsonResponse((low, high), safe=False)
 
 
+@api_view(["POST"])
+def get_premium(request):
+    '''
+    Endpoint for retrieving the premium status of a given user.
+
+    Args:
+        email (str): The user's email
+
+    Returns:
+        is_premium (bool): A boolean indicating whether the user is a premium user
+    '''
+    # Extract email from POST request body
+    data = json.loads(request.body.decode("utf-8"))
+    email = data["email"]
+
+    # Check if the user is a premium user by retrieving from Supabase
+    load_dotenv()
+    ALL_USERS_TABLE = os.environ.get("ALL_USERS_TABLE")
+    client = get_supabase_client()
+    response = client.table(ALL_USERS_TABLE).select("is_premium").eq("email", email).execute()
+    is_premium = response.data[0]["is_premium"]
+    return JsonResponse(is_premium, safe=False)
+
+
 @api_view(["GET"])
 def get_tickers(request):
     '''

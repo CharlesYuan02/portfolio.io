@@ -2,8 +2,10 @@ import './Chatbot.css';
 import React, { useState, useRef, useEffect } from 'react';
 import { Send } from 'lucide-react';
 import axios from 'axios';
+import { useAuth0 } from '@auth0/auth0-react';
 
 const Chatbot = ({ resetTrigger, onResetComplete }) => {
+    const { user } = useAuth0();
     const [messages, setMessages] = useState([]);
     const [selectedStock, setSelectedStock] = useState('');
     const [isLoading, setIsLoading] = useState(false); // Loading state for chatbot response - prevent multiple requests at once
@@ -11,6 +13,7 @@ const Chatbot = ({ resetTrigger, onResetComplete }) => {
     const [error, setError] = useState('');
     const [stocks, setStocks] = useState([]);
     const messagesEndRef = useRef(null);
+    const hasPremiumAccess = false;
 
     /* Reset message history when resetTrigger is true */
     useEffect(() => {
@@ -30,6 +33,24 @@ const Chatbot = ({ resetTrigger, onResetComplete }) => {
 
     useEffect(scrollToBottom, [messages]);
 
+    /* Check if user has premium access */
+    useEffect(() => {
+        const fetchPremiumStatus = async () => {
+            try {
+                const response = await axios.post('/backend/premium/', { email: user.email });
+                if (!response.data) {
+                    setMessages([{ text: "You do not have access to this feature. Please upgrade to premium.", sender: 'bot' }]);
+                } else {
+                    setMessages([{ text: "Hi there! Ask me anything about one of the listed stocks.", sender: 'bot' }]);
+                    hasPremiumAccess = true;
+                }
+            } catch (err) {
+                setError(err.message);
+            }
+        };
+        fetchPremiumStatus();
+    }, []);
+
     /* Fetch available stock tickers for dropdown */
     useEffect(() => {
         const fetchTickers = async () => {
@@ -45,6 +66,7 @@ const Chatbot = ({ resetTrigger, onResetComplete }) => {
     }, []);
 
     const handleSend = () => {
+        if (!hasPremiumAccess) return;
         if (input.trim()) {
             setIsLoading(true);
             // Add user message immediately, then chatbot message after fetching response

@@ -27,6 +27,7 @@ urlpatterns = [
     path("backend/portfolio_holdings/", views.get_portfolio_holdings, name="get_portfolio_holdings"),
     path("backend/portfolio_history/", views.get_portfolio_history, name="get_portfolio_history"),
     path("backend/daily_price_range/", views.get_daily_price_range, name="get_daily_price_range"),
+    path("backend/premium/", views.get_premium, name="get_premium"),
     path("backend/tickers/", views.get_tickers, name="get_tickers"),
     path("backend/chatbot/", views.get_chatbot_response, name="get_chatbot_response"),
     path("dashboard/", TemplateView.as_view(template_name="index.html")),
